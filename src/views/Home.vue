@@ -11,7 +11,7 @@
     >
       <RouterLink
         :to="`/individualRecipe/${recipe.identifier}`"
-        class="outline outline-2 m-2 bg-white cardHover rounded-md overflow-hidden"
+        class="outline outline-2 m-2 bg-white cardHover rounded-md overflow-hidden flex"
         v-for="recipe in $store.state.recipes"
         :key="recipe.identifier"
       >
@@ -20,12 +20,14 @@
           src="https://www.simplyrecipes.com/thmb/8Lw8f_pzlJOwoUbNhVs2L45m0Lg=/300x225/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/Carrot-Fennel-Chevre-Galette-LEAD-6-4d6d01533ff04e4c9e677a412580d052.jpg"
           alt=""
         /> -->
-        <div class="m-4">
-          <h1 class="text-red-800 font-bold text-[1rem] mb-1">
-            {{ recipe.category }}
-          </h1>
-          <p class="font-normal text-[2rem]">{{ recipe.title }}</p>
-          <div class="flex item-center mt-2">
+        <div class="m-4 w-full flex flex-col justify-between">
+          <div class="">
+            <h1 class="text-red-800 font-bold text-[1rem] mb-1">
+              {{ recipe.category }}
+            </h1>
+            <p class="font-normal text-[2rem] leading-8">{{ recipe.title }}</p>
+          </div>
+          <div class="flex item-center mt-4">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 512 512"
@@ -154,7 +156,6 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { RouterLink } from "vue-router";
-
 const store = useStore();
 const popupOpen = ref(false);
 const newRecipe = ref({
@@ -167,7 +168,6 @@ const newRecipe = ref({
   ingredientRow: 1,
   steps: 1,
 });
-
 function togglePopup() {
   // clear the input fields after if user close the popup
   newRecipe.value = {
@@ -182,46 +182,43 @@ function togglePopup() {
   };
   popupOpen.value = !popupOpen.value;
 }
-
 function addNewIngredient() {
   newRecipe.value.ingredientRow++;
 }
-
 function addNewStep() {
   newRecipe.value.steps++;
 }
-
 function deleteIngredientRow(index) {
   newRecipe.value.ingredients.splice(index, 1);
   newRecipe.value.ingredientRow--;
 }
-
 function deleteStepRow(index) {
   newRecipe.value.method.splice(index, 1);
   newRecipe.value.steps--;
 }
 
+function generateID() {
+  return Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
+}
+
+console.log(generateID() + generateID());
 function addNewRecipe() {
   // replace space with "-"
-  newRecipe.value.identifier = newRecipe.value.title
-    .toLocaleLowerCase()
-    .replace(/\s/g, "-");
-
+  newRecipe.value.identifier = generateID() + generateID();
   if (newRecipe.value.category == "") {
     alert("Please enter a category");
     return;
   }
-
   if (newRecipe.value.title == "") {
     alert("Please enter a title");
     return;
   }
-
   if (newRecipe.value.description == "") {
     alert("Please enter the description");
     return;
   }
-
   if (newRecipe.value.ingredients == "") {
     alert("Please enter the ingredient");
     return;
@@ -234,7 +231,6 @@ function addNewRecipe() {
     alert("Please enter a duration");
     return;
   }
-
   // while (popupOpen.value === true) {
   //   if (newRecipe.value.method == "") {
   //     alert("Please enter the method");
@@ -245,31 +241,22 @@ function addNewRecipe() {
   //     return;
   //   }
   // }
-
   const emptyRemoved = newRecipe.value.ingredients.filter(
     (ingredient) => ingredient !== "empty"
   );
-
   // set new ingredients array with empty ones removed
   newRecipe.value.ingredients = emptyRemoved;
-
   // set new ingredientRow count based on new emptyRemoved length
   newRecipe.value.ingredientRow = emptyRemoved.length;
-
   const emptyMethodRemoved = newRecipe.value.method.filter(
     (step) => step !== "empty"
   );
-
   // set new method array with empty ones removed
   newRecipe.value.method = emptyMethodRemoved;
-
   // set new steps count based on new emptyMethodRemoved length
   newRecipe.value.steps = emptyMethodRemoved.length;
-
   store.commit("addRecipe", newRecipe.value);
-
   console.log(newRecipe.value);
-
   // clear the input fields after adding
   newRecipe.value = {
     category: "",
@@ -295,43 +282,35 @@ function addNewRecipe() {
   cursor: pointer;
   transition: 0.3s ease-in-out;
 }
-
 .addRecipeBtn:hover {
   transform: translateX(4px) translateY(-4px);
   box-shadow: -4px 4px 4px rgba(60, 60, 93, 0.33);
 }
-
 .recipeGrid {
   grid-template-columns: repeat(auto-fit, minmax(1rem, 1fr));
 }
-
 .cardHover {
   transition: 0.3s ease-in-out;
   cursor: pointer;
 }
-
 .cardHover:hover {
   transform: translateX(4px) translateY(-4px);
   box-shadow: -10px 10px 4px rgba(245, 202, 11, 0.843);
 }
-
 .inputWrapper {
   display: flex;
   flex-direction: column;
   margin: 10px 12px;
 }
-
 .labelStyle {
   font-size: 1.1rem;
 }
-
 .inputStyle {
   border-radius: 12px;
   padding: 0px 10px;
   font-size: 0.8rem;
   outline: none;
 }
-
 .addBtn {
   background-color: #34d399;
   font-weight: 700;
@@ -344,7 +323,6 @@ function addNewRecipe() {
   font-size: 16px;
   align-self: flex-start;
 }
-
 .trashIcon {
   background-color: rgb(226, 14, 14);
   fill: white;
@@ -352,7 +330,6 @@ function addNewRecipe() {
   padding: 0px 5px;
   border-radius: 10px;
 }
-
 .addCloseWrapper {
   display: flex;
   justify-content: space-between;

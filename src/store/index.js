@@ -49,6 +49,24 @@ const store = createStore({
     addRecipe(state, payload) {
       state.recipes.push(payload);
     },
+    editRecipe(state, payload) {
+      // const recipeToEdit = state.recipes.find(
+      //   (singleRecipe) => singleRecipe.identifier == payload.identifier
+      // );
+
+      // const indexToEdit = state.recipes.identifier.includes(payload.identifier);
+
+      // state.recipes.splice(indexToEdit);
+
+      // if (state.recipes.identifier == payload.identifier) {
+      // }
+
+      const indexToEdit = state.recipes.findIndex(
+        (singleRecipe) => singleRecipe.identifier == payload.identifier
+      );
+
+      state.recipes.splice(indexToEdit, 1, payload);
+    },
   },
 });
 
